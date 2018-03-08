@@ -89,16 +89,12 @@ class CPU
 
     public function executeOne()
     {
-        $this->PC &= 0xFFFF;
-
         $byte = $this->ram->read($this->PC);
-
-        printr(dechex($byte)." ".$byte);
-
         $op = $this->opCodeList->decode($byte);
 
-        $this->{$op->call}($op);
+        $this->disasm($this->PC);
 
+        $this->{$op->call}($op);
     }
 
     public function getRam()
@@ -153,4 +149,30 @@ class CPU
 
         $this->movePC($op->len);
     }
+
+    public function disasm($addr)
+    {
+        $byte = $this->ram->read($addr);
+        $op = $this->opCodeList->decode($byte);
+
+        $line = $op->mnemonic;
+        $line .= ' ';
+
+        switch($op->mode)
+        {
+            case 'zp':
+                    $value = $this->ram->read($this->PC+1);
+                break;
+            case 'imm':
+                    $line .='#';
+                    $value = $this->ram->read($this->PC+1);
+                break;
+        }
+
+        $line .= '$';
+        $line .= dechex($value);
+
+        printr($line);
+    }
+
 }

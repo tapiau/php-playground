@@ -44,7 +44,7 @@ class VM
         while(true)
         {
             $this->cpu->executeOne();
-            $this->cpu->printRegs();
+//            $this->cpu->printRegs();
         }
     }
 

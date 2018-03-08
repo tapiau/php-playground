@@ -22,4 +22,5 @@ class opCode
             $this->{$key} = $value;
         }
     }
+
 }
