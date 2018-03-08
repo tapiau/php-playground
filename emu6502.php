@@ -9,6 +9,6 @@
 require_once('src/func.php');
 
 $vm = new VM();
-$vm->loadFileToRam($argv[1],0xc000);
+$vm->loadFileToRam($argv[1],0xC000);
 
-$vm->run(0xc000);
+$vm->run(0xC000);
