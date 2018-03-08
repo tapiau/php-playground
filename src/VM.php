@@ -41,9 +41,19 @@ class VM
         $this->cpu->reset();
         !is_null($pc) && $this->cpu->setPC($pc);
 
-        while(true)
+        $run = true;
+
+        while($run)
         {
-            $this->cpu->executeOne();
+            try
+            {
+                $this->cpu->executeOne();
+            }
+            catch(Exception $e)
+            {
+                printr("Something gone wrong: ".$e->getMessage());
+                $run = false;
+            }
 //            $this->cpu->printRegs();
         }
     }
