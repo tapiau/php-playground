@@ -31,19 +31,4 @@ class RAM
         $addr &= self::MASK;
         return $this->mem[$addr];
     }
-
-    public function writeWord($addr,$word)
-    {
-        $this->write($addr,$word & 0xFF);
-        $addr++;
-        $this->write($addr,$word >> 8);
-
-        return $this;
-    }
-    public function readWord($addr)
-    {
-        return $this->read($addr)+$this->read($addr+1)<<8;
-    }
-
-
 }

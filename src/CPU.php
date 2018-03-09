@@ -114,22 +114,61 @@ class CPU
         );
     }
 
+    public function memoryRead($mode,$addr)
+	{
+		switch($mode)
+		{
+			case 'imm':
+				$value = $this->ram->read($addr);
+				break;
+			case 'zp':
+				$addr = $this->ram->read($addr);
+				$value = $this->ram->read($addr);
+				break;
+		}
+
+		return $value;
+	}
+
+	public function read($addr)
+	{
+		return $this->ram->read($addr);
+	}
+
+	public function write($addr,$value)
+	{
+		$this->ram->write($addr,$value);
+	}
+	public function writeWord($addr,$word)
+	{
+		$this->write($addr,$word & 0xFF);
+		$this->write($addr+1,$word >> 8);
+
+		return $this;
+	}
+	public function readWord($addr)
+	{
+		return $this->read($addr)+$this->read($addr+1)<<8;
+	}
+
+
+	public function memoryWrite($mode,$addr,$value)
+	{
+		switch($mode)
+		{
+			case 'zp':
+				$addr = $this->ram->read($addr);
+				break;
+		}
+
+		$this->ram->write($addr,$value);
+	}
+
     public function loadRegister(opCode $op)
     {
         $reg = substr($op->mnemonic,-1);
 
-        switch($op->mode)
-        {
-            case 'imm':
-                $value = $this->ram->read($this->PC+1);
-                break;
-            case 'zp':
-                $addr = $this->ram->read($this->PC+1);
-                $value = $this->ram->read($addr);
-                break;
-        }
-
-        $this->{$reg} = $value;
+        $this->{$reg} = $this->memoryRead($op->mode,$this->PC+1);
 
         $this->movePC($op->len);
     }
@@ -138,14 +177,7 @@ class CPU
     {
         $reg = substr($op->mnemonic,-1);
 
-        switch($op->mode)
-        {
-            case 'zp':
-                $addr = $this->ram->read($this->PC+1);
-                break;
-        }
-
-        $this->ram->write($addr,$this->{$reg});
+        $this->memoryWrite($op->mode,$this->PC+1,$this->{$reg});
 
         $this->movePC($op->len);
     }

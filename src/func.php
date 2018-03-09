@@ -52,7 +52,7 @@ function isWindows()
     return $windows;
 }
 
-class Object
+class MyObject
 {
     public function __construct($array=array())
     {
@@ -74,7 +74,7 @@ class Object
 function object($array=array())
 {
 //	$obj = ((object) NULL);
-    $obj = new Object();
+    $obj = new MyObject();
     foreach($array as $key=>$value)
     {
         if(is_array($value))
@@ -399,17 +399,20 @@ function _autoload($class_name)
     require_once $found;
 }
 
-function is_iterable($obj,$interface=false)
+if(!function_exists('is_iterable'))
 {
-    return
-        is_object($obj) ?
-            $interface ?
-                array_search('Iterator',class_implements($obj))!==false
-                :
-                true
-            :
-            is_array($obj)
-        ;
+	function is_iterable($obj,$interface=false)
+	{
+		return
+			is_object($obj) ?
+				$interface ?
+					array_search('Iterator',class_implements($obj))!==false
+					:
+					true
+				:
+				is_array($obj)
+			;
+	}
 }
 
 function locale($lang)
